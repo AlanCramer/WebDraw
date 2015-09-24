@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<script src="vendor/d3.min.js"></script>
+<head>
+</head>
+
+<body>
+   <div id="svgWrapper" width=300 height=300 style="border:1px solid black; float:left; margin-top:10px"></div>
+
+<script>
+
+    dbFillet = function(dbfdata) {
+    
+        var w = dbfdata.w;
+        var h = dbfdata.h;
+        var r = dbfdata.r;
+    
+        var res = [];
+
+        res.push({geom:"rect", x:0, y:0, width:w, height:h, color:"black"});
+        res.push({geom:"circle", cx:0, cy:h-r, r:r, color:"black"});
+        res.push({geom:"circle", cx:w, cy:h-r, r:r, color:"black"});
+    
+        return res;
+    }
+    
+    var drag = d3.behavior.drag()
+        .origin(function(d) { return d; })
+        .on("drag", dragmove);
+    
+    function dragmove(d) {
+      d3.select(this)
+          .attr("width", d.width = d3.event.x);
+    }
+    
+    var dbfInputs = [
+        {w:20, h:100, r:10},
+        {w:20, h:50, r:20},
+    ];
+    
+    var svg = d3.select("#svgWrapper").append("svg")
+                                    .attr("width", 300)
+                                    .attr("height", 300)
+                                    .attr("id", "svg");
+
+    svg.selectAll("dbf")
+      .data(dbfInputs)
+      .enter().append("g")
+      .attr("class", "dbfInput")
+      .attr("transform", "translate(80,80)")
+      .each(function(dbfInput) {
+            var dbfgeoms = dbFillet(dbfInput);
+
+            var dbfInGroup = d3.select(this);
+            var dbfOutGroup = dbfInGroup.selectAll("geoms");
+            
+            dbfOutGroup
+                .attr("class", "dbfGeoms")
+                .data(dbfgeoms)
+                .enter()
+                .append( function(d) { 
+                    return document.createElementNS("http://www.w3.org/2000/svg", d.geom); })
+                .each(function(d) {
+                    var geom = d3.select(this);
+                    switch(d.geom) {
+                      case "rect":
+                        geom
+                            .attr("x", d.x)
+                            .attr("y", d.y)
+                            .attr("width", d.width)
+                            .attr("height", d.height)
+                            .attr("fill", d.color)
+                            .on("mouseover", function(d)
+                             {
+                                 d3.select(this).attr("fill","blue");
+                             })
+                            .on("mouseout", function(d)
+                             {
+                                 d3.select(this).attr("fill","black");
+                             })
+                             .call(drag);
+                      break;
+                      case "circle":
+                        geom
+                            .attr("cx", d.cx)
+                            .attr("cy", d.cy)
+                            .attr("r", d.r)
+                            .attr("fill", d.color);
+                      break;
+                    }
+                });
+      });
+
+</script>
+
+</body>
+</html>
