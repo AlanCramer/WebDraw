@@ -12,8 +12,8 @@
 
 <script>
 
-    // drags a group that is the parent of the selected thing
-    var in_editor_drag = d3.behavior.drag()
+    // drags a group 
+    var dragTranslateGroup = d3.behavior.drag()
         .origin(function() {
             var g = this;
             return {x: d3.transform(g.getAttribute("transform")).translate[0],
@@ -21,7 +21,9 @@
         })
         .on("drag", function(d,i) {
             g = this;
-            console.log(g);
+            
+            var manips = d3.select(this).selectAll(".manipulator");
+            
             translate = d3.transform(g.getAttribute("transform")).translate;
             x = d3.event.dx + translate[0],
             y = d3.event.dy + translate[1];
@@ -30,7 +32,6 @@
             // what's this do exactly?
             d3.event.sourceEvent.stopPropagation();
         });
-
 
     dbFillet = function(dbfdata) {
     
@@ -71,7 +72,7 @@
       .enter().append("g")
       .attr("class", "dbfInput")
       .attr("transform", "translate(80,80)")
-      .call(in_editor_drag)
+      .call(dragTranslateGroup)
       .on("mouseenter", function(d)
       {
         var d3g = d3.select(this);
