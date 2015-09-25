@@ -27,8 +27,37 @@
             translate = d3.transform(g.getAttribute("transform")).translate;
             x = d3.event.dx + translate[0],
             y = d3.event.dy + translate[1];
+
             d3.select(g).attr("transform", "translate(" + x + "," + y + ")");
+            console.log(i);
             
+            // what's this do exactly?
+            d3.event.sourceEvent.stopPropagation();
+        });
+       
+    var dragOrigin = {};   
+    var dragRecalcGroup = d3.behavior.drag()
+        .origin(function(d) {
+            var g = this;
+            dragOrigin.w = d.w;
+            return {x: d3.transform(g.getAttribute("transform")).translate[0],
+                    y: d3.transform(g.getAttribute("transform")).translate[1]};
+        })
+        .on("drag", function(d,i) {
+            g = this;
+            
+            var manips = d3.select(this).selectAll(".manipulator");
+
+            
+            translate = d3.transform(g.getAttribute("transform")).translate;
+            var x = d3.event.dx;
+            var y = d3.event.dy;
+
+            if ( (d.w + x) > 0 ) {
+                d.w = d.w + x;
+            }
+            updateGeoms(d,i);
+
             // what's this do exactly?
             d3.event.sourceEvent.stopPropagation();
         });
@@ -66,13 +95,57 @@
         .attr("width", 300)
         .attr("height", 300)
         .attr("id", "svg");
+        
+        
+    function attributeGeoms(d) {
+        var geom = d3.select(this);
+        geom.attr("class", "geom");
+        switch(d.geom) {
+          case "rect":
+            geom
+                .attr("x", d.x)
+                .attr("y", d.y)
+                .attr("width", d.width)
+                .attr("height", d.height)
+                .attr("fill", d.color)
+          break;
+          case "circle":
+            geom
+                .attr("cx", d.cx)
+                .attr("cy", d.cy)
+                .attr("r", d.r)
+                .attr("fill", d.color);
+          break;
+        }
+    }    
 
+    function updateGeoms(dbfInput, i) {
+
+        var dbfgeoms = dbFillet(dbfInput);
+
+        var dbfInGroup = d3.select(this);
+        
+        var dbfIns = d3.selectAll(".dbfInput");
+        var thisIn = d3.select(dbfIns[0][i]);
+        
+        thisIn.selectAll(".geom").remove(); 
+
+        var dbfOutGroup = thisIn.selectAll("geom")
+            .data(dbfgeoms);
+                    
+        dbfOutGroup
+            .enter()
+            .append( function(d) { 
+                return document.createElementNS("http://www.w3.org/2000/svg", d.geom); })
+            .each(attributeGeoms);
+    }
+        
     svg.selectAll("dbf")
       .data(dbfInputs)
       .enter().append("g")
       .attr("class", "dbfInput")
       .attr("transform", "translate(80,80)")
-      .call(dragTranslateGroup)
+      .call(dragRecalcGroup)
       .on("mouseenter", function(d)
       {
         var d3g = d3.select(this);
@@ -91,39 +164,8 @@
         var manips = d3g.selectAll(".manipulator");
         manips.remove();
       })
-      .each(function(dbfInput) {
-            var dbfgeoms = dbFillet(dbfInput);
-
-            var dbfInGroup = d3.select(this);
-            var dbfOutGroup = dbfInGroup.selectAll("geoms");
-            
-            dbfOutGroup
-                .attr("class", "dbfGeoms")
-                .data(dbfgeoms)
-                .enter()
-                .append( function(d) { 
-                    return document.createElementNS("http://www.w3.org/2000/svg", d.geom); })
-                .each(function(d) {
-                    var geom = d3.select(this);
-                    switch(d.geom) {
-                      case "rect":
-                        geom
-                            .attr("x", d.x)
-                            .attr("y", d.y)
-                            .attr("width", d.width)
-                            .attr("height", d.height)
-                            .attr("fill", d.color)
-                      break;
-                      case "circle":
-                        geom
-                            .attr("cx", d.cx)
-                            .attr("cy", d.cy)
-                            .attr("r", d.r)
-                            .attr("fill", d.color);
-                      break;
-                    }
-                });
-      });  
+      .each(updateGeoms)
+      ;  
 
 </script>
 
