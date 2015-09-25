@@ -2,12 +2,35 @@
 <meta charset="utf-8">
 <script src="vendor/d3.min.js"></script>
 <head>
+
+
+
 </head>
 
 <body>
    <div id="svgWrapper" width=300 height=300 style="border:1px solid black; float:left; margin-top:10px"></div>
 
 <script>
+
+    // drags a group that is the parent of the selected thing
+    var in_editor_drag = d3.behavior.drag()
+        .origin(function() {
+            var g = this;
+            return {x: d3.transform(g.getAttribute("transform")).translate[0],
+                    y: d3.transform(g.getAttribute("transform")).translate[1]};
+        })
+        .on("drag", function(d,i) {
+            g = this;
+            console.log(g);
+            translate = d3.transform(g.getAttribute("transform")).translate;
+            x = d3.event.dx + translate[0],
+            y = d3.event.dy + translate[1];
+            d3.select(g).attr("transform", "translate(" + x + "," + y + ")");
+            
+            // what's this do exactly?
+            d3.event.sourceEvent.stopPropagation();
+        });
+
 
     dbFillet = function(dbfdata) {
     
@@ -26,9 +49,9 @@
     
     var drag = d3.behavior.drag()
         .origin(function(d) { return d; })
-        .on("drag", dragmove);
+        .on("drag", dragRectWidth);
     
-    function dragmove(d) {
+    function dragRectWidth(d) {
       d3.select(this)
           .attr("width", d.width = d3.event.x);
     }
@@ -39,15 +62,34 @@
     ];
     
     var svg = d3.select("#svgWrapper").append("svg")
-                                    .attr("width", 300)
-                                    .attr("height", 300)
-                                    .attr("id", "svg");
+        .attr("width", 300)
+        .attr("height", 300)
+        .attr("id", "svg");
 
     svg.selectAll("dbf")
       .data(dbfInputs)
       .enter().append("g")
       .attr("class", "dbfInput")
       .attr("transform", "translate(80,80)")
+      .call(in_editor_drag)
+      .on("mouseenter", function(d)
+      {
+        var d3g = d3.select(this);
+        var bbox = d3g[0][0].getBBox();
+        d3g.append("circle")
+           .attr("cx", bbox.x + bbox.width/2)
+           .attr("cy", bbox.y + bbox.height/2)
+           .attr("r", 8)
+           .attr("fill", "red")
+           .attr("class", "manipulator")
+           ;
+      })
+      .on("mouseleave", function(d)
+      {
+        var d3g = d3.select(this);
+        var manips = d3g.selectAll(".manipulator");
+        manips.remove();
+      })
       .each(function(dbfInput) {
             var dbfgeoms = dbFillet(dbfInput);
 
@@ -70,15 +112,6 @@
                             .attr("width", d.width)
                             .attr("height", d.height)
                             .attr("fill", d.color)
-                            .on("mouseover", function(d)
-                             {
-                                 d3.select(this).attr("fill","blue");
-                             })
-                            .on("mouseout", function(d)
-                             {
-                                 d3.select(this).attr("fill","black");
-                             })
-                             .call(drag);
                       break;
                       case "circle":
                         geom
@@ -89,7 +122,7 @@
                       break;
                     }
                 });
-      });
+      });  
 
 </script>
 
