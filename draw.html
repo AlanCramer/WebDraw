@@ -3,14 +3,91 @@
 <script src="vendor/d3.min.js"></script>
 <head>
 
-
-
 </head>
 
 <body>
    <div id="svgWrapper" width=300 height=300 style="border:1px solid black; float:left; margin-top:10px"></div>
 
 <script>
+
+    
+    var LTS = function(ltsdata){
+    
+        var l = ltsdata.l; // confusion around input object
+        var w = ltsdata.w;
+        var h = ltsdata.h;
+
+        var res = [];
+        
+        res = res.concat(LTS_base(l,h));
+        res = res.concat(LTS_base(l,h));
+        
+        return res;
+    }
+    
+    var LTS_base = function(l,h) {
+    
+        var res = [];
+                
+        var ptStr = "0,0 0," + h + " " + l + ",0";
+        var geoms = [
+            {
+                geom:"polygon", 
+                attrs:{
+                    points:ptStr,
+                    fill:"black"
+                }
+            },
+            {
+                geom:"circle", 
+                attrs:{
+                    cx:0,
+                    cy:0,
+                    r:5,
+                    fill:"blue"
+                }
+            },
+            {
+                geom:"circle", 
+                attrs:{
+                    cx:0,
+                    cy:h,
+                    r:5,
+                    fill:"blue"
+                }
+            }, 
+            {            
+                geom:"circle", 
+                attrs:{
+                    cx:l,
+                    cy:0,
+                    r:5,
+                    fill:"blue"
+                }
+            },
+        ];
+        
+        res = res.concat(geoms);
+        
+        return res;
+        
+    }
+    
+    dbFillet = function(dbfdata) {
+    
+        var w = dbfdata.w;
+        var h = dbfdata.h;
+        var r = dbfdata.r;
+    
+        var res = [];
+
+        res.push({geom:"rect", attrs:{x:0, y:0, width:w, height:h, color:"black"}});
+        res.push({geom:"circle", attrs:{cx:0, cy:h-r, r:r, color:"black"}});
+        res.push({geom:"circle", attrs:{cx:w, cy:h-r, r:r, color:"black"}});
+    
+        return res;
+    }
+
 
     // drags a group 
     var dragTranslateGroup = d3.behavior.drag()
@@ -29,7 +106,6 @@
             y = d3.event.dy + translate[1];
 
             d3.select(g).attr("transform", "translate(" + x + "," + y + ")");
-            console.log(i);
             
             // what's this do exactly?
             d3.event.sourceEvent.stopPropagation();
@@ -47,35 +123,19 @@
             g = this;
             
             var manips = d3.select(this).selectAll(".manipulator");
-
             
             translate = d3.transform(g.getAttribute("transform")).translate;
             var x = d3.event.dx;
             var y = d3.event.dy;
 
-            if ( (d.w + x) > 0 ) {
-                d.w = d.w + x;
+            if ( (d.l + x) > 0 ) {
+                d.l = d.l + x;
             }
             updateGeoms(d,i);
 
             // what's this do exactly?
             d3.event.sourceEvent.stopPropagation();
         });
-
-    dbFillet = function(dbfdata) {
-    
-        var w = dbfdata.w;
-        var h = dbfdata.h;
-        var r = dbfdata.r;
-    
-        var res = [];
-
-        res.push({geom:"rect", x:0, y:0, width:w, height:h, color:"black"});
-        res.push({geom:"circle", cx:0, cy:h-r, r:r, color:"black"});
-        res.push({geom:"circle", cx:w, cy:h-r, r:r, color:"black"});
-    
-        return res;
-    }
     
     var drag = d3.behavior.drag()
         .origin(function(d) { return d; })
@@ -86,42 +146,23 @@
           .attr("width", d.width = d3.event.x);
     }
     
-    var dbfInputs = [
-        {w:20, h:100, r:10},
-        {w:20, h:50, r:20},
-    ];
-    
     var svg = d3.select("#svgWrapper").append("svg")
         .attr("width", 300)
         .attr("height", 300)
         .attr("id", "svg");
         
-        
     function attributeGeoms(d) {
         var geom = d3.select(this);
         geom.attr("class", "geom");
-        switch(d.geom) {
-          case "rect":
-            geom
-                .attr("x", d.x)
-                .attr("y", d.y)
-                .attr("width", d.width)
-                .attr("height", d.height)
-                .attr("fill", d.color)
-          break;
-          case "circle":
-            geom
-                .attr("cx", d.cx)
-                .attr("cy", d.cy)
-                .attr("r", d.r)
-                .attr("fill", d.color);
-          break;
-        }
+        
+        Object.keys(d.attrs).forEach(function(key) {
+            geom.attr(key, d.attrs[key]);
+        });
     }    
 
-    function updateGeoms(dbfInput, i) {
+    function updateGeoms(ltsInput, i) {
 
-        var dbfgeoms = dbFillet(dbfInput);
+        var dbfgeoms = LTS(ltsInput);
 
         var dbfInGroup = d3.select(this);
         
@@ -139,13 +180,56 @@
                 return document.createElementNS("http://www.w3.org/2000/svg", d.geom); })
             .each(attributeGeoms);
     }
-        
-    svg.selectAll("dbf")
+ 
+
+    var dbfInputs = [
+        {w:20, h:100, r:10},
+//        {w:20, h:50, r:20},
+    ];
+    
+    var ltsInputs = [
+        {w: 100, h:20, l:120},
+        {w: 80, h:40, l:100},
+    ];
+    
+    
+
+    svg.selectAll("lts")
+      .data(ltsInputs)
+      .enter().append("g")
+      .attr("class", "dbfInput") 
+      .attr("transform", function(d, i) { return "translate(" + (i+1)*50 +" ,80)"; }) // hmm ...
+      .call(dragRecalcGroup)
+      .on("mouseenter", function(d)
+      {
+        var d3g = d3.select(this);
+        var bbox = d3g[0][0].getBBox();
+        d3g.append("circle")
+           .attr("cx", bbox.x + bbox.width/2)
+           .attr("cy", bbox.y + bbox.height/2)
+           .attr("r", 6)
+           .attr("fill", "red")
+           .attr("class", "manipulator")
+           ;
+      })
+      .on("mouseleave", function(d)
+      {
+        var d3g = d3.select(this);
+        var manips = d3g.selectAll(".manipulator");
+        manips.remove();
+      })
+      .each(updateGeoms)
+      ;
+
+    
+    
+   
+/*    svg.selectAll("dbf")
       .data(dbfInputs)
       .enter().append("g")
       .attr("class", "dbfInput")
       .attr("transform", "translate(80,80)")
-      .call(dragRecalcGroup)
+      .call(dragTranslateGroup)
       .on("mouseenter", function(d)
       {
         var d3g = d3.select(this);
@@ -166,6 +250,7 @@
       })
       .each(updateGeoms)
       ;  
+*/
 
 </script>
 
