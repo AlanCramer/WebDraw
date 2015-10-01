@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<script src="vendor/d3.min.js"></script>
+<head>
+
+</head>
+
+<body>
+   <div id="svgWrapper" width=300 height=300 style="border:1px solid black; float:left; margin-top:10px"></div>
+
+<script>
+
+    
+    var LTS = function(ltsdata){
+    
+        var l = ltsdata.l; // confusion around input object
+        var w = ltsdata.w;
+        var h = ltsdata.h;
+
+        var res = [];
+        
+        res = res.concat(LTS_base(l,h));
+        //res = res.concat(LTS_base(l,h));
+        
+        return res;
+    }
+    
+    var LTS_base = function(l,h) {
+    
+        var res = [];
+                
+        var ptStr = "0,0 0," + h + " " + l +"," + h +" "+ l + ",0";
+        var geoms = [
+            {
+                geom:"polygon", 
+                attrs:{
+                    points:ptStr,
+                    fill:"black"
+                }
+            },
+            {
+                geom:"circle", 
+                attrs:{
+                    cx:0,
+                    cy:0,
+                    r:5,
+                    fill:"blue"
+                }
+            },
+            {
+                geom:"circle", 
+                attrs:{
+                    cx:0,
+                    cy:h,
+                    r:5,
+                    fill:"blue"
+                }
+            }, 
+            {            
+                geom:"circle", 
+                attrs:{
+                    cx:l,
+                    cy:0,
+                    r:5,
+                    fill:"blue"
+                }
+            },
+        ];
+        
+        res = res.concat(geoms);
+        
+        return res;
+        
+    }
+  
+var dragCircle = d3.behavior.drag()
+    .origin(function(d) { 
+        return d; })
+    .on("drag", dragTranslateCircle);
+
+function dragTranslateCircle(d) {
+  d3.select(this)
+      .attr("cx", d.x = Math.max(0, Math.min(300, d3.event.x)))
+      .attr("cy", d.y = Math.max(0, Math.min(300, d3.event.y)));
+      
+  d3.selectAll(".dbfInput")
+    .each(function(d) {
+        var orig = {
+            x:d3.transform(d.output.getAttribute("transform")).translate[0] ,
+            y:d3.transform(d.output.getAttribute("transform")).translate[1] 
+        };
+        
+//        console.log (
+//            d3.transform(d.output.getAttribute("transform")).translate[0] + " " +
+//            d3.transform(d.output.getAttribute("transform")).translate[1]);
+        
+//        d3.select(g).attr("transform", "translate(" + x + "," + y + ")");
+        var x = orig.x + d3.event.dx;
+        var y = orig.y + d3.event.dy;
+
+        d3.select(d.output)
+            .attr("transform", "translate(" + x + "," + y + ")");
+    });
+    
+}
+    
+    var svg = d3.select("#svgWrapper").append("svg")
+        .attr("width", 300)
+        .attr("height", 300)
+        .attr("id", "svg");
+        
+    function attributeGeoms(d) {
+        var geom = d3.select(this);
+        geom.attr("class", "geom");
+        
+        Object.keys(d.attrs).forEach(function(key) {
+            geom.attr(key, d.attrs[key]);
+        });
+    }    
+
+    function updateGeoms(ltsInput, i) {
+
+        var dbfgeoms = ltsInput.fn(ltsInput.inputs);
+
+        if (!ltsInput.output){
+            ltsInput.output = d3.select(this)[0][0];
+        }
+        var dbfInGroup = ltsInput.output;
+        
+        var dbfIns = d3.selectAll(".dbfInput");
+        var thisIn = d3.select(dbfIns[0][i]);
+        
+        thisIn.selectAll(".geom").remove(); 
+
+        var dbfOutGroup = thisIn.selectAll("geom")
+            .data(dbfgeoms);
+                    
+        dbfOutGroup
+            .enter()
+            .append( function(d) { 
+                return document.createElementNS("http://www.w3.org/2000/svg", d.geom); })
+            .each(attributeGeoms);
+    }
+ 
+    
+    var ltsInputs = [
+        { fn: LTS, inputs: {w: 100, h:20, l:120} } ,
+        //{fn: LTS, inputs: {w: 80, h:40, l:100}} ,
+    ];
+    
+    // manips - draw fn, params to update, 
+
+    svg.selectAll("lts")
+      .data(ltsInputs)
+      .enter().append("g")
+      .attr("class", "dbfInput") 
+      .attr("transform", function(d, i) { return "translate(" + (i+1)*50 +" ,80)"; }) // hmm ...
+      .each(updateGeoms)
+      ;
+
+    svg.selectAll("manipulator")
+        .data([{x:100, y:100}])
+        .enter()
+        .append("circle")
+        .attr("fill", "red")
+        .attr("cx", function(d) { 
+            return d.x } )
+        .attr("cy", function(d) { 
+            return d.y })
+        .attr("r", 10)
+        .call(dragCircle)
+        ;
+        
+
+</script>
+
+</body>
+</html>

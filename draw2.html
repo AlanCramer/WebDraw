@@ -29,7 +29,7 @@
     
         var res = [];
                 
-        var ptStr = "0,0 0," + h + " " + l + ",0";
+        var ptStr = "0,0 0," + h + " " + l +"," + h +" "+ l + ",0";
         var geoms = [
             {
                 geom:"polygon", 
@@ -72,38 +72,16 @@
         return res;
         
     }
-    
-    dbFillet = function(dbfdata) {
-    
-        var w = dbfdata.w;
-        var h = dbfdata.h;
-        var r = dbfdata.r;
-    
-        var res = [];
-
-        res.push({geom:"rect", attrs:{x:0, y:0, width:w, height:h, color:"black"}});
-        res.push({geom:"circle", attrs:{cx:0, cy:h-r, r:r, color:"black"}});
-        res.push({geom:"circle", attrs:{cx:w, cy:h-r, r:r, color:"black"}});
-    
-        return res;
-    }
-
-
+  
     // drags a group 
-    var dragTranslateGroup = d3.behavior.drag()
-        .origin(function() {
-            var g = this;
-            return {x: d3.transform(g.getAttribute("transform")).translate[0],
-                    y: d3.transform(g.getAttribute("transform")).translate[1]};
-        })
+    var dragTranslateEntity = d3.behavior.drag()
         .on("drag", function(d,i) {
-            g = this;
-            
-            translate = d3.transform(g.getAttribute("transform")).translate;
-            x = d3.event.dx + translate[0],
-            y = d3.event.dy + translate[1];
+            var g = d3.select(this);
 
-            d3.select(g).attr("transform", "translate(" + x + "," + y + ")");
+            x = d3.event.dx,
+            y = d3.event.dy;
+
+            g.attr("transform", "translate(" + x + "," + y + ")");
             
             // what's this do exactly?
             d3.event.sourceEvent.stopPropagation();
@@ -119,7 +97,7 @@
         })
         .on("drag", function(d,i) {
         
-            var g = this.parentNode;
+            var g = this.output;
             if (g === null) {
                 console.log ("g is null??");
                 return;
@@ -187,11 +165,6 @@
             .each(attributeGeoms);
     }
  
-
-    var dbfInputs = [
-        {fn: dbFillet, inputs:{w:20, h:100, r:10}},
-//        {w:20, h:50, r:20},
-    ];
     
     var ltsInputs = [
         {fn: LTS, inputs: {w: 100, h:20, l:120}} ,
@@ -205,59 +178,30 @@
       .enter().append("g")
       .attr("class", "dbfInput") 
       .attr("transform", function(d, i) { return "translate(" + (i+1)*50 +" ,80)"; }) // hmm ...
-      //.call(dragTranslateGroup)
       .on("mouseenter", function(d)
       {
-        var d3g = d3.select(this);
-        var bbox = d3g[0][0].getBBox();
-        d3g.append("circle")
-           .attr("cx", bbox.x + bbox.width/2)
-           .attr("cy", bbox.y + bbox.height/2)
-           .attr("r", 6)
+        var bbox = this.getBBox();
+        var grp = d3.select(this);
+        var offset = {x: d3.transform(grp[0][0].getAttribute("transform")).translate[0],
+                    y: d3.transform(grp[0][0].getAttribute("transform")).translate[1]};
+        svg.append("circle") // add graphics
+           .attr("cx", bbox.x + bbox.width/2 + offset.x)
+           .attr("cy", bbox.y + bbox.height/2 + offset.y)
+           .attr("r",8)
            .attr("fill", "red")
            .attr("class", "manipulator")
-           .call(dragRecalcGroup)
+           .on("mouseenter", function(d) {
+                d3.select(this).style("fill", "green");
+           })
+           .on("mouseleave", function(d) {
+                d3.select(this).style("fill", "red");
+           })
+           .call(dragTranslateEntity); // add drag behavior
            ;
-      })
-      .on("mouseleave", function(d)
-      {
-        var d3g = d3.select(this);
-        var manips = d3g.selectAll(".manipulator");
-        manips.remove();
       })
       .each(updateGeoms)
       ;
 
-    
-    
-   
-/*    svg.selectAll("dbf")
-      .data(dbfInputs)
-      .enter().append("g")
-      .attr("class", "dbfInput")
-      .attr("transform", "translate(80,80)")
-      .call(dragTranslateGroup)
-      .on("mouseenter", function(d)
-      {
-        var d3g = d3.select(this);
-        var bbox = d3g[0][0].getBBox();
-        d3g.append("circle")
-           .attr("cx", bbox.x + bbox.width/2)
-           .attr("cy", bbox.y + bbox.height/2)
-           .attr("r", 8)
-           .attr("fill", "red")
-           .attr("class", "manipulator")
-           ;
-      })
-      .on("mouseleave", function(d)
-      {
-        var d3g = d3.select(this);
-        var manips = d3g.selectAll(".manipulator");
-        manips.remove();
-      })
-      .each(updateGeoms)
-      ;  
-*/
 
 </script>
 
