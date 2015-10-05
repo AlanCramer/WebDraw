@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<script src="vendor/d3.min.js"></script>
+<head>
+
+</head>
+
+<body>
+
+<button onclick="OnClickMe()"> Click Me </button>
+
+<script>
+    var theData = d3.range(10);
+
+    d3.selectAll("p")
+        .data(theData)
+        .enter()
+        .append("p")
+        .text(function(d, i) {return " this is a really long line "+ (i+1) + " that goes on and on " ;})
+        .style("font-size", function(d, i) {return d +"px";})
+ //       .style("border", "1px solid black")
+        .style("margin", "0px")
+        .style("padding", "6px")
+        .style("background", function(d, i) {return i%2? "#ecc" : "#cec"})
+        ;
+        
+        
+    function OnClickMe() {
+        d3.select("button")
+            .text("I was Clicked");
+            
+        theData[5] = 36;
+         
+        d3.selectAll("p")
+            .data(theData)
+            .style("font-size", function(d, i) {                    
+                return d + "px";
+            });
+        
+        d3.selectAll("p")
+            .each(function(d, i) { console.log(d); });
+    }     
+</script>
+
+</body>
+
+</html>

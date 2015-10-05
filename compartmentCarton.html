@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<script src="vendor/d3.min.js"></script>
+
+<head>
+</head>
+
+<body>
+<script>
+
+
+
+    var svgWidth = 800;
+    var svgHeight = 500;
+
+    var infoBox = d3.select("body").append("div")
+        .attr("class", "infobox")
+        .style("background", "#eee")
+        .style("margin", "20px")
+        .style("padding", "5px");    
+
+    var svg = d3.select("body")
+//        .append("div")
+//        .attr("contenteditable", "true")
+        .append("svg")
+        .attr("width", svgWidth)
+        .attr("height", svgHeight)
+        .style("border", "10px solid #bfb");
+    
+    var cLength = 20; // inches
+    var cWidth = 15; // inches
+    var cHeight = 2; // inches
+    
+    var xSpacings = [2,5,10];
+    var ySpacings = [6];
+    
+    var imgXMargin = 20; // px ... hmm 
+    var imgYMargin = 20;
+    
+    var pxPerIn = (svgWidth- 2*imgXMargin)/cLength;
+    pxPerIn /=2 ; 
+    infoBox.append("label")
+        .text(pxPerIn.toString() + " pixels per inch.")
+        .style("display", "block")
+        .style("margin-bottom", "20px")
+        ;
+        
+    var spcInpDiv = infoBox.append("div")
+        .attr("class", "spacerInputs")
+        //.style("margin", "10px")
+        ;
+    
+    spcInpDiv.append("input")
+        .attr("id", "xSpacerInput")
+        .attr("type", "text")
+        .attr("value", xSpacings.toString())
+        .style("display", "block")
+        .style("margin-bottom", "3px")
+        .on("change", handleDataUpdate)
+        ;
+        
+    spcInpDiv.append("input")
+        .attr("id", "ySpacerInput")
+        .attr("type", "text")
+        .attr("value", ySpacings.toString())
+        .style("display", "block")
+        .style("margin-bottom", "3px")
+        ;    
+        
+        
+    var xscale = d3.scale.linear()
+        .domain([0, cLength])
+        .range([imgXMargin, imgXMargin + cLength*pxPerIn]);
+    
+    svg.append("rect")
+        .attr("class", "outline")
+        .attr("x", imgXMargin)
+        .attr("y", imgYMargin)       
+        .attr("width", cLength*pxPerIn)
+        .attr("height", cWidth*pxPerIn)
+        .style("fill", "#bbb");
+    
+    updateSpacerData(xSpacings, ySpacings);
+    
+
+//    svg.selectAll(".dimLabelArrow")
+//        .data(xSpacingFence)
+//        .enter()
+//        .append("text")
+//        .attr("class", "dimLabelArrow")
+//        .attr("x1", function(d, i) {
+//            var prev = i > 0 ? xSpacingFence[i-1] : 0;
+//            return imgXMargin + (d+prev)*pxPerIn/2 ; 
+//        })
+//        .attr("y1",  imgYMargin + .1 * cWidth*pxPerIn - 8 ) // 8 is font-size/2
+//        .attr("text-anchor", "middle")
+//        .text(function(d) { return d; })
+//        ;    
+    
+    
+    svg.selectAll(".vertSpacerPart")
+        .data(xSpacings)
+        .enter()
+        .append("g")
+        .attr("transform", "translate(" + (svgWidth/2 + 10) + ",0)")
+        .append("rect")
+        .attr("x", 0)
+        .attr("y", function(d, i) { return i*(cHeight*pxPerIn +10) + 20; })
+        .attr("width", cWidth*pxPerIn)
+        .attr("height", cHeight*pxPerIn)
+        .style("fill", "#bbf");
+        
+//    svg.selectAll(".horizSpacerPart")
+//        .data(xSpacings)
+//        .enter()
+//        .append("g")
+//        .attr("transform", "translate(" + (svgHeight/2 + 10) + ",0)")
+//        .append("rect")
+//        .attr("x", 0)
+//        .attr("y", function(d, i) { return i*(cHeight*pxPerIn +10) + 20; })
+//        .attr("width", cLength*pxPerIn)
+//        .attr("height", cHeight*pxPerIn)
+//        .style("fill", "#bbf");   
+
+
+    function handleDataUpdate() {
+    
+        // validate data
+        var xspc = document.getElementById("xSpacerInput");
+        
+        var vals = xspc.value.split(",");
+        var newX = [];
+        vals.forEach(function(val) { newX.push(parseFloat(val));});
+        
+        var yspc = document.getElementById("ySpacerInput");
+        
+        var vals = yspc.value.split(",");
+        var newY = [];
+        vals.forEach(function(val) { newY.push(parseFloat(val));});
+        
+        updateSpacerData(newX, newY);
+    }
+
+    function updateSpacerData(xSpacings, ySpacings) {
+    
+        var vertSpc = svg.selectAll(".vertSpacer")
+            .data(xSpacings);
+            
+        vertSpc.exit().remove();
+
+        vertSpc
+            .enter()
+            .append("line");
+            
+        vertSpc    
+            .attr("class", "vertSpacer")
+            .attr("x1", function(d) { return imgXMargin + d*pxPerIn ; } )
+            .attr("y1",  imgYMargin  )
+            .attr("x2", function(d) { return imgXMargin + d*pxPerIn ; } )
+            .attr("y2",  imgYMargin + cWidth*pxPerIn  )
+            .style("stroke", "black");
+            
+        var hrzSpc = svg.selectAll(".horizSpacer")
+            .data(ySpacings);
+            
+        hrzSpc.exit().remove();
+
+        hrzSpc
+            .enter()
+            .append("line");
+            
+        hrzSpc    
+            .attr("class", "horizSpacer")
+            .attr("x1", imgXMargin )
+            .attr("y1",  function(d) { return imgYMargin + d*pxPerIn ; }  )
+            .attr("x2", imgXMargin + cLength*pxPerIn )
+            .attr("y2",  function(d) { return imgYMargin + d*pxPerIn ; }  )
+            .style("stroke", "black");
+        
+        var xSpacingFence = xSpacings.concat([cLength]);
+        var dimLbls = svg.selectAll(".dimLabel")
+            .data(xSpacingFence);
+            
+        dimLbls.exit().remove();
+
+        dimLbls
+            .enter()
+            .append("text");
+            
+        dimLbls    
+            .attr("class", "dimLabel")
+            .attr("x", function(d, i) {
+                var prev = i > 0 ? xSpacingFence[i-1] : 0;
+                return imgXMargin + (d+prev)*pxPerIn/2 ; 
+            })
+            .attr("y",  imgYMargin + .1 * cWidth*pxPerIn  )
+            .attr("text-anchor", "middle")
+            .text(function(d) { return " " + d + " "; })
+            ;
+    
+    };
+
+ 
+</script>
+</body>
+
+
+</html>

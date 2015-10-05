@@ -20,7 +20,7 @@
         var res = [];
         
         res = res.concat(LTS_base(l,h));
-        //res = res.concat(LTS_base(l,h));
+        res = res.concat(LTS_base(l,h));
         
         return res;
     }
@@ -69,20 +69,20 @@
         
         res = res.concat(geoms);
         
-        return res;
-        
+        return res;      
     }
   
 var dragCircle = d3.behavior.drag()
     .origin(function(d) { 
         return d; })
-    .on("drag", dragTranslateCircle);
+    .on("drag", dragRecalcCircleManip);
 
-function dragTranslateCircle(d) {
+function dragTranslateCircleManip(d) {
   d3.select(this)
       .attr("cx", d.x = Math.max(0, Math.min(300, d3.event.x)))
       .attr("cy", d.y = Math.max(0, Math.min(300, d3.event.y)));
       
+      // now move manipulated objects
   d3.selectAll(".dbfInput")
     .each(function(d) {
         var orig = {
@@ -90,16 +90,40 @@ function dragTranslateCircle(d) {
             y:d3.transform(d.output.getAttribute("transform")).translate[1] 
         };
         
-//        console.log (
-//            d3.transform(d.output.getAttribute("transform")).translate[0] + " " +
-//            d3.transform(d.output.getAttribute("transform")).translate[1]);
-        
-//        d3.select(g).attr("transform", "translate(" + x + "," + y + ")");
         var x = orig.x + d3.event.dx;
         var y = orig.y + d3.event.dy;
 
         d3.select(d.output)
             .attr("transform", "translate(" + x + "," + y + ")");
+    });
+    
+}
+
+
+function dragRecalcCircleManip(d) {
+    d3.select(this)
+      .attr("cx", d.x = Math.max(0, Math.min(300, d3.event.x)))
+      .attr("cy", d.y = Math.max(0, Math.min(300, d3.event.y)));
+      
+      // now move manipulated objects
+    d3.selectAll(".dbfInput")
+        .each(function(d) {
+            var orig = {
+                x:d3.transform(d.output.getAttribute("transform")).translate[0] ,
+                y:d3.transform(d.output.getAttribute("transform")).translate[1] 
+            };
+            
+            var x = orig.x + d3.event.dx;
+            var y = orig.y + d3.event.dy;
+
+            //d3.select(d.output)
+            //    .attr("transform", "translate(" + x + "," + y + ")");
+
+            var inputs = d.inputs;
+            inputs.l = inputs.l + d3.event.dx;
+            inputs.h = inputs.h + d3.event.dy;
+            updateGeoms(d,0);
+        
     });
     
 }
@@ -145,7 +169,7 @@ function dragTranslateCircle(d) {
     
     var ltsInputs = [
         { fn: LTS, inputs: {w: 100, h:20, l:120} } ,
-        //{fn: LTS, inputs: {w: 80, h:40, l:100}} ,
+        {fn: LTS, inputs: {w: 80, h:40, l:100}} ,
     ];
     
     // manips - draw fn, params to update, 
@@ -156,21 +180,39 @@ function dragTranslateCircle(d) {
       .attr("class", "dbfInput") 
       .attr("transform", function(d, i) { return "translate(" + (i+1)*50 +" ,80)"; }) // hmm ...
       .each(updateGeoms)
+      .on("mouseenter", addCircleManip)
+      .on("mouseleave", degradeCircleManip)
       ;
 
-    svg.selectAll("manipulator")
+function addCircleManip() {
+    var manip = svg.selectAll(".manipulator");
+    
+    manip
         .data([{x:100, y:100}])
         .enter()
         .append("circle")
-        .attr("fill", "red")
+        .attr("class", "manipulator")
         .attr("cx", function(d) { 
             return d.x } )
         .attr("cy", function(d) { 
             return d.y })
         .attr("r", 10)
+        .attr("fill", "red")
         .call(dragCircle)
+        .on("mouseenter", function () {
+            d3.select(this).transition().style("opacity", 1);
+            })
         ;
         
+    manip    
+        .style("opacity", 1);    
+ }
+
+ function degradeCircleManip() {
+    svg.selectAll(".manipulator")
+        .transition().duration(2000)
+       .style("opacity",0);
+ }
 
 </script>
 
