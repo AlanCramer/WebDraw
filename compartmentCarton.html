@@ -2,6 +2,13 @@
 <meta charset="utf-8">
 <script src="vendor/d3.min.js"></script>
 
+<script>
+    var MyApp = {};
+</script>
+
+
+<script src="dbFillet.js"></script>
+
 <head>
 </head>
 
@@ -97,19 +104,6 @@
 //        .attr("text-anchor", "middle")
 //        .text(function(d) { return d; })
 //        ;    
-    
-    
-    svg.selectAll(".vertSpacerPart")
-        .data(xSpacings)
-        .enter()
-        .append("g")
-        .attr("transform", "translate(" + (svgWidth/2 + 10) + ",0)")
-        .append("rect")
-        .attr("x", 0)
-        .attr("y", function(d, i) { return i*(cHeight*pxPerIn +10) + 20; })
-        .attr("width", cWidth*pxPerIn)
-        .attr("height", cHeight*pxPerIn)
-        .style("fill", "#bbf");
         
 //    svg.selectAll(".horizSpacerPart")
 //        .data(xSpacings)
@@ -142,8 +136,8 @@
         updateSpacerData(newX, newY);
     }
 
-    function updateSpacerData(xSpacings, ySpacings) {
-    
+    function updateVerticalSpacers(xSpacings) {
+            
         var vertSpc = svg.selectAll(".vertSpacer")
             .data(xSpacings);
             
@@ -165,6 +159,9 @@
                 return imgXMargin + tmp*pxPerIn ; } )
             .attr("y2",  imgYMargin + cWidth*pxPerIn  )
             .style("stroke", "black");
+    }
+    
+    function updateHorizontalSpacers(ySpacings)  {
             
         var hrzSpc = svg.selectAll(".horizSpacer")
             .data(ySpacings);
@@ -185,9 +182,12 @@
             .attr("y2",  function(d,i) { 
                 tmp = i > 0 ? tmp + d : d;
                 return imgYMargin + tmp*pxPerIn ; }  )
-            .style("stroke", "black");
-        
-        var total = 0;
+            .style("stroke", "black");    
+    }
+    
+    
+    function updateDimensionLabels(xSpacings) {
+            var total = 0;
         xSpacings.forEach(function(d) { total += d; } );
         
         var xSpacingFence = xSpacings.concat([cLength - total]);
@@ -212,7 +212,90 @@
             .attr("text-anchor", "middle")
             .text(function(d) { return " " + d + " "; })
             ;
+    }
     
+    function updateVerticalSpacerParts(xSpacings, ySpacings) {
+        var vertSpcParts = svg.selectAll(".vertSpacerPart")
+        .data(xSpacings);
+        
+        vertSpcParts.exit().remove();
+
+        vertSpcParts
+            .enter()
+            .append("g");
+            
+        vertSpcParts    
+            .attr("transform", "translate(" + (svgWidth/2 + 10) + ",0)")
+            .append("rect")
+            .attr("x", 0)
+            .attr("y", function(d, i) { return i*(cHeight*pxPerIn +10) + 20; })
+            .attr("width", cWidth*pxPerIn)
+            .attr("height", cHeight*pxPerIn)
+            .style("fill", "#449"); 
+    }
+    
+    function updateHorizontalSpacerParts(xSpacings, ySpacings) {
+        var horzSpcPartsG = svg.selectAll(".horzSpacerPart")
+            .data(ySpacings)
+            ;
+            
+        horzSpcPartsG.exit().remove();
+
+        var hRect = horzSpcPartsG
+            .enter()
+            .append("g")
+            .attr("class", "horzSpacerPart")
+            .append("g")
+            .attr("class", "geom")
+            .append("rect");
+            
+        hRect 
+            .attr("x", 0)
+            .attr("y", function(d, i) { return i*(cHeight*pxPerIn ) ; })
+            .attr("width", cLength*pxPerIn)
+            .attr("height", cHeight*pxPerIn)
+            .style("fill", "#449")
+            ;
+ 
+        var fillets = horzSpcPartsG.selectAll(".dbFillet")
+            .data(xSpacings)
+            ;
+ 
+        fillets.exit().remove();
+
+        var dbFillets = MyApp.dbFillet();   
+        var tmp = 0;
+        fillets    
+            .enter()
+            .append("g")
+            .attr("class", "dbFillet");
+            
+        fillets   
+            .attr("transform", function(d,i) { 
+                tmp = i > 0 ? tmp + d : d;
+                return "translate (" + tmp*pxPerIn + ",0)"; } )
+            .call(dbFillets);
+            ;
+            
+    }
+        
+    function addFillets(sel) {
+        //console.log(sel);
+        
+        sel.append("g")
+           .
+        
+        return ;
+    }
+    
+    function updateSpacerData(xSpacings, ySpacings) {
+    
+        updateVerticalSpacers(xSpacings);
+        updateHorizontalSpacers(ySpacings);
+        updateDimensionLabels(xSpacings)
+        updateVerticalSpacerParts(xSpacings, ySpacings);
+        updateHorizontalSpacerParts(xSpacings, ySpacings);
+        
     };
 
  
