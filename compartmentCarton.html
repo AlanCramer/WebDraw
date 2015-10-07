@@ -6,7 +6,6 @@
     var MyApp = {};
 </script>
 
-
 <script src="dbFillet.js"></script>
 
 <head>
@@ -17,22 +16,8 @@
 
 
 
-    var svgWidth = 800;
-    var svgHeight = 500;
-
-    var infoBox = d3.select("body").append("div")
-        .attr("class", "infobox")
-        .style("background", "#eee")
-        .style("margin", "20px")
-        .style("padding", "5px");    
-
-    var svg = d3.select("body")
-//        .append("div")
-//        .attr("contenteditable", "true")
-        .append("svg")
-        .attr("width", svgWidth)
-        .attr("height", svgHeight)
-        .style("border", "10px solid #bfb");
+    var InfoBoxSvgWidth = 300;
+    var InfoBoxSvgHeight = 200;
     
     var cLength = 20; // inches
     var cWidth = 15; // inches
@@ -41,18 +26,24 @@
     var xSpacings = [2,5,10];
     var ySpacings = [6];
     
-    var imgXMargin = 20; // px ... hmm 
-    var imgYMargin = 20;
+    var pxPerIn = (InfoBoxSvgWidth)/cLength; 
+
+    var infoBox = d3.select("body").append("div")
+        .attr("class", "infobox")
+        .style("background", "#eee")
+        .style("margin", "20px")
+        .style("padding", "5px");  
     
-    var pxPerIn = (svgWidth- 2*imgXMargin)/cLength;
-    pxPerIn /=2 ; 
-    infoBox.append("label")
+    var leftColumn = infoBox.append("div")
+        .style("float", "left");
+    
+    leftColumn.append("label")
         .text(pxPerIn.toString() + " pixels per inch.")
         .style("display", "block")
         .style("margin-bottom", "20px")
         ;
         
-    var spcInpDiv = infoBox.append("div")
+    var spcInpDiv = leftColumn.append("div")
         .attr("class", "spacerInputs")
         //.style("margin", "10px")
         ;
@@ -73,50 +64,34 @@
         .style("display", "block")
         .style("margin-bottom", "3px")
         .on("change", handleDataUpdate)
-        ;    
+        ;  
         
-        
-    var xscale = d3.scale.linear()
-        .domain([0, cLength])
-        .range([imgXMargin, imgXMargin + cLength*pxPerIn]);
+    var InfoBoxSvg = infoBox
+        .append("div")
+        .append("svg")
+        .attr("width", InfoBoxSvgWidth)
+        .attr("height", InfoBoxSvgHeight)
+        .style("border", "10px solid #bfb");
     
-    svg.append("rect")
+    InfoBoxSvg.append("rect")
         .attr("class", "outline")
-        .attr("x", imgXMargin)
-        .attr("y", imgYMargin)       
+        .attr("x", 0)
+        .attr("y", 0)       
         .attr("width", cLength*pxPerIn)
         .attr("height", cWidth*pxPerIn)
         .style("fill", "#bbb");
     
-    updateSpacerData(xSpacings, ySpacings);
+    var partsSvgWidth = 2*InfoBoxSvgWidth;
+    var partsSvgHeight = 2*InfoBoxSvgHeight;
     
-
-//    svg.selectAll(".dimLabelArrow")
-//        .data(xSpacingFence)
-//        .enter()
-//        .append("text")
-//        .attr("class", "dimLabelArrow")
-//        .attr("x1", function(d, i) {
-//            var prev = i > 0 ? xSpacingFence[i-1] : 0;
-//            return imgXMargin + (d+prev)*pxPerIn/2 ; 
-//        })
-//        .attr("y1",  imgYMargin + .1 * cWidth*pxPerIn - 8 ) // 8 is font-size/2
-//        .attr("text-anchor", "middle")
-//        .text(function(d) { return d; })
-//        ;    
-        
-//    svg.selectAll(".horizSpacerPart")
-//        .data(xSpacings)
-//        .enter()
-//        .append("g")
-//        .attr("transform", "translate(" + (svgHeight/2 + 10) + ",0)")
-//        .append("rect")
-//        .attr("x", 0)
-//        .attr("y", function(d, i) { return i*(cHeight*pxPerIn +10) + 20; })
-//        .attr("width", cLength*pxPerIn)
-//        .attr("height", cHeight*pxPerIn)
-//        .style("fill", "#bbf");   
-
+    var partsSvg = d3.select("body")
+        .append("div")
+        .append("svg")
+        .attr("width", partsSvgWidth)
+        .attr("height", partsSvgHeight)
+        .style("border", "1px solid black");
+    
+    updateSpacerData(xSpacings, ySpacings);
 
     function handleDataUpdate() {
     
@@ -138,7 +113,7 @@
 
     function updateVerticalSpacers(xSpacings) {
             
-        var vertSpc = svg.selectAll(".vertSpacer")
+        var vertSpc = InfoBoxSvg.selectAll(".vertSpacer")
             .data(xSpacings);
             
         vertSpc.exit().remove();
@@ -152,18 +127,18 @@
             .attr("class", "vertSpacer")
             .attr("x1", function(d) { 
                 tmp += d;
-                return imgXMargin + tmp*pxPerIn  ; } )
-            .attr("y1",  imgYMargin  )
+                return tmp*pxPerIn  ; } )
+            .attr("y1",  0  )
             .attr("x2", function(d,i) { 
                 tmp = (i===0) ? d : tmp + d;
-                return imgXMargin + tmp*pxPerIn ; } )
-            .attr("y2",  imgYMargin + cWidth*pxPerIn  )
+                return tmp*pxPerIn ; } )
+            .attr("y2", cWidth*pxPerIn  )
             .style("stroke", "black");
     }
     
     function updateHorizontalSpacers(ySpacings)  {
             
-        var hrzSpc = svg.selectAll(".horizSpacer")
+        var hrzSpc = InfoBoxSvg.selectAll(".horizSpacer")
             .data(ySpacings);
             
         hrzSpc.exit().remove();
@@ -174,14 +149,14 @@
             
         hrzSpc    
             .attr("class", "horizSpacer")
-            .attr("x1", imgXMargin )
+            .attr("x1", 0 )
             .attr("y1",  function(d,i) { 
                 tmp = i > 0 ? tmp  + d : d;
-                return imgYMargin + tmp*pxPerIn ; }  )
-            .attr("x2", imgXMargin + cLength*pxPerIn )
+                return tmp*pxPerIn ; }  )
+            .attr("x2", cLength*pxPerIn )
             .attr("y2",  function(d,i) { 
                 tmp = i > 0 ? tmp + d : d;
-                return imgYMargin + tmp*pxPerIn ; }  )
+                return tmp*pxPerIn ; }  )
             .style("stroke", "black");    
     }
     
@@ -191,7 +166,7 @@
         xSpacings.forEach(function(d) { total += d; } );
         
         var xSpacingFence = xSpacings.concat([cLength - total]);
-        var dimLbls = svg.selectAll(".dimLabel")
+        var dimLbls = InfoBoxSvg.selectAll(".dimLabel")
             .data(xSpacingFence);
             
         dimLbls.exit().remove();
@@ -206,36 +181,67 @@
             .attr("x", function(d, i) {
                 var prev = xSpacingFence[i-1];
                 tmp = i > 0 ? tmp + prev : 0;
-                return imgXMargin + tmp*pxPerIn + (d)*pxPerIn/2; 
+                return tmp*pxPerIn + (d)*pxPerIn/2; 
             })
-            .attr("y",  imgYMargin + .1 * cWidth*pxPerIn  )
+            .attr("y", 0.1 * cWidth*pxPerIn  )
             .attr("text-anchor", "middle")
             .text(function(d) { return " " + d + " "; })
             ;
     }
     
     function updateVerticalSpacerParts(xSpacings, ySpacings) {
-        var vertSpcParts = svg.selectAll(".vertSpacerPart")
-        .data(xSpacings);
+        var vertSpcParts = partsSvg.selectAll(".vertSpacerPart")
+            .data(xSpacings);
         
         vertSpcParts.exit().remove();
 
-        vertSpcParts
+        var rect = vertSpcParts
             .enter()
-            .append("g");
-            
-        vertSpcParts    
-            .attr("transform", "translate(" + (svgWidth/2 + 10) + ",0)")
+            .append("g")   
+            .attr("transform", function(d, i) { 
+                return  "translate(" + (partsSvgWidth/2 + 10) + "," + i*(cHeight*pxPerIn +10) + ")" ;
+            })
+            .append("g")
             .append("rect")
+            ;
+           
+        rect   
             .attr("x", 0)
-            .attr("y", function(d, i) { return i*(cHeight*pxPerIn +10) + 20; })
+            .attr("y", 0)
             .attr("width", cWidth*pxPerIn)
             .attr("height", cHeight*pxPerIn)
-            .style("fill", "#449"); 
+            .style("fill", "#944"); 
+            
+
+         var fillets = vertSpcParts.selectAll(".dbFillet")
+            .data(ySpacings)
+            ;
+ 
+        fillets.exit().remove();
+
+        var dbFillets = MyApp.dbFillet()
+            .width(.25*pxPerIn)
+            .height(cHeight*pxPerIn/2)
+            .radius(.125*pxPerIn);
+            
+        var tmp = 0;
+        fillets    
+            .enter()
+            .append("g")
+            .attr("class", "dbFillet");
+            
+        fillets   
+            .attr("transform", function(d,i) { 
+                tmp = i > 0 ? tmp + d : d;
+                return "translate (" + tmp*pxPerIn + ",0)"; } )
+            .call(dbFillets);
+            ;
+               
+            
     }
     
     function updateHorizontalSpacerParts(xSpacings, ySpacings) {
-        var horzSpcPartsG = svg.selectAll(".horzSpacerPart")
+        var horzSpcPartsG = partsSvg.selectAll(".horzSpacerPart")
             .data(ySpacings)
             ;
             
@@ -252,7 +258,7 @@
             
         hRect 
             .attr("x", 0)
-//            .attr("y", function(d, i) { return i*(cHeight*pxPerIn ) ; })
+            .attr("y", 0)
             .attr("width", cLength*pxPerIn)
             .attr("height", cHeight*pxPerIn)
             .style("fill", "#449")
@@ -264,7 +270,11 @@
  
         fillets.exit().remove();
 
-        var dbFillets = MyApp.dbFillet();   
+        var dbFillets = MyApp.dbFillet()
+            .width(.25*pxPerIn)
+            .height(cHeight*pxPerIn/2)
+            .radius(.125*pxPerIn);
+            
         var tmp = 0;
         fillets    
             .enter()
@@ -279,22 +289,13 @@
             ;
             
     }
-        
-    function addFillets(sel) {
-        //console.log(sel);
-        
-        sel.append("g")
-           .
-        
-        return ;
-    }
     
     function updateSpacerData(xSpacings, ySpacings) {
     
         updateVerticalSpacers(xSpacings);
         updateHorizontalSpacers(ySpacings);
         updateDimensionLabels(xSpacings)
-        //updateVerticalSpacerParts(xSpacings, ySpacings);
+        updateVerticalSpacerParts(xSpacings, ySpacings);
         updateHorizontalSpacerParts(xSpacings, ySpacings);
         
     };
