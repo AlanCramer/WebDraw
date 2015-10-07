@@ -25,14 +25,14 @@
             
                 g.append("circle")
                     .attr("cx", -width/2)
-                    .attr("cy", radius)
+                    .attr("cy", height-radius)
                     .attr("r", radius)
                     .style("fill", "#888")
                     ;
                     
                 g.append("circle")
                     .attr("cx", width/2)
-                    .attr("cy", radius)
+                    .attr("cy", height-radius)
                     .attr("r", radius)
                     .style("fill", "#888")
                     ;

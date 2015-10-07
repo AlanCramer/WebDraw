@@ -245,13 +245,14 @@
             .enter()
             .append("g")
             .attr("class", "horzSpacerPart")
+            .attr("transform", function(d,i) {return "translate (0, " + i*(cHeight*pxPerIn+10 ) + ")"; })
             .append("g")
             .attr("class", "geom")
             .append("rect");
             
         hRect 
             .attr("x", 0)
-            .attr("y", function(d, i) { return i*(cHeight*pxPerIn ) ; })
+//            .attr("y", function(d, i) { return i*(cHeight*pxPerIn ) ; })
             .attr("width", cLength*pxPerIn)
             .attr("height", cHeight*pxPerIn)
             .style("fill", "#449")
@@ -293,7 +294,7 @@
         updateVerticalSpacers(xSpacings);
         updateHorizontalSpacers(ySpacings);
         updateDimensionLabels(xSpacings)
-        updateVerticalSpacerParts(xSpacings, ySpacings);
+        //updateVerticalSpacerParts(xSpacings, ySpacings);
         updateHorizontalSpacerParts(xSpacings, ySpacings);
         
     };
