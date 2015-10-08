@@ -7,6 +7,7 @@
 </script>
 
 <script src="fingerJoint.js"></script>
+<script src="makeBoard.js"></script>
 
 <head>
 </head>
@@ -24,89 +25,20 @@
         .style("border", "1px solid black")
         ;
 
-    var xOffset = 40;
-    var yOffset = 20;
-        
     var pxPerIn = 50;
     
     var boxWidth = 8;
     var boxLength = 4;
     var boxHeight = 3;
-    var fjStarts = [0,1,2,3];
     
-    var board = svg.append("g");
+    var board1 = MyApp.makeBoard(boxWidth, boxHeight, pxPerIn, "#944", [0,1,2,3]);
+    var board2 = MyApp.makeBoard(boxLength, boxHeight, pxPerIn, "#449", [0.5,1.5,2.5]);
     
-    board.append("rect")
-        .attr("x", xOffset)
-        .attr("y", yOffset)
-        .attr("width", boxWidth*pxPerIn)
-        .attr("height", boxHeight*pxPerIn)
-        .style("fill", "#944")
-        ;
-    
-    var fingerJts = MyApp.fingerJoint()
-        .fingerWidth(.5*pxPerIn)
-        .fingerHeight(.25*pxPerIn) // quarter inch material
-        .radius(.08*pxPerIn) // eighth inch diam bit
-        ; // returns function 
-    
-    var lfjs = board.selectAll(".leftFingerJoint")
-        .data(fjStarts);
-          
-    lfjs.enter()
-        .append("g")
-        .attr("class", "leftFingerJoint")
-        .attr("transform", "translate (" + xOffset + ", " + yOffset + ") rotate(-90)" )
-        .call(fingerJts)
-        ;
-        
-    var rfjs = board.selectAll(".rightFingerJoint")
-        .data(fjStarts);
-          
-    rfjs.enter()
-        .append("g")
-        .attr("class", "rightFingerJoint")
-        .attr("transform", "translate (" + 
-            (xOffset + boxWidth*pxPerIn) + ", " + 
-            (yOffset + boxHeight*pxPerIn) + ") rotate(90)" )
-        .call(fingerJts)
-        ;        
-
-    // now the other board
-    var board2 = svg.append("g")
-    
-    board2.append("rect")
-        .attr("x", xOffset)
-        .attr("y", yOffset + svgHeight/2)
-        .attr("width", boxLength*pxPerIn)
-        .attr("height", boxHeight*pxPerIn)
-        .style("fill", "#449")
-        ;
-        
-    var b2fjStarts = [0.5,1.5,2.5]; 
-    var b2lfjs = board2.selectAll(".leftFingerJoint")
-        .data(b2fjStarts);
-          
-    b2lfjs.enter()
-        .append("g")
-        .attr("class", "leftFingerJoint")
-        .attr("transform", "translate (" + 
-            xOffset + ", " + 
-            (yOffset + svgHeight/2) + ") rotate(-90)" )
-        .call(fingerJts)
-        ;
-        
-    var b2rfjs = board2.selectAll(".rightFingerJoint")
-        .data(b2fjStarts);
-          
-    b2rfjs.enter()
-        .append("g")
-        .attr("class", "rightFingerJoint")
-        .attr("transform", "translate (" + 
-            (xOffset + boxLength*pxPerIn) + ", " + 
-            (yOffset + boxHeight*pxPerIn + svgHeight/2) + ") rotate(90)" )
-        .call(fingerJts)
-        ;  
+    var xOffset = 30;
+    var yOffset = 20;  
+     
+    board1.attr("transform", "translate(" + xOffset + ", " + yOffset + ")");
+    board2.attr("transform", "translate(" + xOffset + ", " + (yOffset + svgHeight/2) + ")");
     
 </script>
 
