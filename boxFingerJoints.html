@@ -37,9 +37,19 @@
     var xOffset = 30;
     var yOffset = 20;  
      
-    board1.attr("transform", "translate(" + xOffset + ", " + yOffset + ")");
-    board2.attr("transform", "translate(" + xOffset + ", " + (yOffset + svgHeight/2) + ")");
+    board1
+        .attr("transform", "scale(0)")
+        .transition()
+        .duration(1000)
+        .attr("transform", "translate(" + xOffset + ", " + yOffset + ") scale(1)")
+        ;
     
+    board2
+        .attr("transform", "scale(0)")
+        .transition()
+        .duration(1200)
+        .attr("transform", "translate(" + xOffset + ", " + (yOffset + svgHeight/2) + ") scale(1)")
+        ;
 </script>
 
 </body>
