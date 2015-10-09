@@ -1,4 +1,5 @@
-
+(function() {
+    
 myApp.makeBoard = function (boxWidth, boxHeight, pxPerIn, color, fjStarts) {
 
     var board = svg.append("g");
@@ -41,3 +42,5 @@ myApp.makeBoard = function (boxWidth, boxHeight, pxPerIn, color, fjStarts) {
 
     return board;
 }
+
+})();
