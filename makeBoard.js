@@ -15,6 +15,8 @@ myApp.update = function(boardData) {
         ;
         
      var brect = boards.select("rect")
+        .transition()
+        .duration(3000)
         .attr("x", 0)
         .attr("y", 0)
         .attr("width", function(d, i) { return d.width * d.pxPerIn; } )
@@ -50,6 +52,8 @@ myApp.update = function(boardData) {
         ;
 
     rfjs
+        .transition()
+        .duration(3000)
         .attr("transform", function(d) {
         
             // get the data of the parent (the board group) for this joint 

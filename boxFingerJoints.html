@@ -70,7 +70,8 @@ myApp.onBoxDimChange = function() {
 
     boardData = myApp.makeBoardData(boxWidth, boxLength, boxHeight, [0,1,2,3]);
     
-    myApp.update(boardData);
+    var boards = myApp.update(boardData);
+    myApp.layoutBoards(boards);
 }
 
 // boards is a d3 selection of the all the boards (svg groups), 
@@ -84,8 +85,9 @@ myApp.layoutBoards = function(boards) {
     var totalY = yoffset;
     
     boards
+        .transition()
+        .duration(3000)
         .attr("transform", function(d) { 
-        
             var ret = "translate (" + xoffset + ", " + totalY + ")";
             totalY += (d.height * d.pxPerIn + spacing); // setting up for next one
             return  ret;
