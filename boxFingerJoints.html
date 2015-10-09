@@ -68,7 +68,7 @@ myApp.onBoxDimChange = function() {
     boxLength = +document.getElementById("boxLength").value;
     boxHeight = +document.getElementById("boxHeight").value;
 
-    boardData = myApp.makeBoardData(boxWidth, boxLength, boxHeight, [0,1,2,3]);
+    boardData = myApp.makeBoardData(boxWidth, boxLength, boxHeight, fingerLength);
     
     var boards = myApp.update(boardData);
     myApp.layoutBoards(boards);
@@ -101,10 +101,12 @@ myApp.layoutBoards = function(boards) {
     var boxLength = 4;
     var boxHeight = 3;
     
+    var fingerLength = 1;
+    
     var svgWidth = 600;
     var svgHeight = 400;
 
-    var boardData = myApp.makeBoardData(boxWidth, boxLength, boxHeight, [0,1,2,3]);
+    var boardData = myApp.makeBoardData(boxWidth, boxLength, boxHeight, fingerLength);
     
     // todo revisit this function
     buildInfoArea();

@@ -1,8 +1,12 @@
 (function() {
 
-    myApp.makeBoardData = function(boxWidth, boxLength, boxHeight, spacings) {
+    myApp.makeBoardData = function(boxWidth, boxLength, boxHeight, fingerLength) {
     
         var bd = [];
+        
+        var fingerCt = Math.floor(boxHeight/fingerLength);
+        var widthStarts = d3.range(0, boxHeight+fingerLength, fingerLength);
+        var lengthStarts = d3.range(fingerLength/2, boxHeight+fingerLength/2, fingerLength);
         
         bd.push(
             {
@@ -10,7 +14,7 @@
                 height   : boxHeight,
                 pxPerIn  : pxPerIn,
                 color    : "#944",
-                fjStarts : [0,1,2,3] 
+                fjStarts : widthStarts 
             }
         );
     
@@ -20,7 +24,7 @@
                 height   : boxHeight,
                 pxPerIn  : pxPerIn,
                 color    : "#449",
-                fjStarts : [0.5,1.5,2.5] 
+                fjStarts : lengthStarts 
             }   
         );            
     

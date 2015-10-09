@@ -23,6 +23,9 @@ myApp.update = function(boardData) {
         .attr("height", function(d, i) { return d.height * d.pxPerIn; } )
         .style("fill", function(d) { return d.color; } )
         ;
+
+    // this should never happen
+    boards.exit().remove();
     
     // hmm pxPerIn is global?
     var fingerJts = myApp.fingerJoint()
@@ -40,6 +43,8 @@ myApp.update = function(boardData) {
         .attr("transform", "translate (0,0) rotate(-90)" )
         ;
     
+    lfjs.exit().remove();
+    
     lfjs
         .call(fingerJts);
         
@@ -51,6 +56,8 @@ myApp.update = function(boardData) {
         .attr("class", "rightFingerJoint")
         ;
 
+    rfjs.exit().remove();    
+        
     rfjs
         .transition()
         .duration(3000)
