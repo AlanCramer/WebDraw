@@ -3,10 +3,10 @@
 <script src="vendor/d3.min.js"></script>
 
 <script>
-    var MyApp = {};
+    var myApp = {};
 </script>
 
-<script src="fingerJoint.js"></script>
+<script src="d3widgets/fingerJoint.js"></script>
 <script src="makeBoard.js"></script>
 
 <head>
@@ -31,8 +31,8 @@
     var boxLength = 4;
     var boxHeight = 3;
     
-    var board1 = MyApp.makeBoard(boxWidth, boxHeight, pxPerIn, "#944", [0,1,2,3]);
-    var board2 = MyApp.makeBoard(boxLength, boxHeight, pxPerIn, "#449", [0.5,1.5,2.5]);
+    var board1 = myApp.makeBoard(boxWidth, boxHeight, pxPerIn, "#944", [0,1,2,3]);
+    var board2 = myApp.makeBoard(boxLength, boxHeight, pxPerIn, "#449", [0.5,1.5,2.5]);
     
     var xOffset = 30;
     var yOffset = 20;  

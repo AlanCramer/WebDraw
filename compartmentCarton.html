@@ -3,10 +3,10 @@
 <script src="vendor/d3.min.js"></script>
 
 <script>
-    var MyApp = {};
+    var myApp = {};
 </script>
 
-<script src="dbFillet.js"></script>
+<script src="d3widgets/dbFillet.js"></script>
 
 <head>
 </head>
@@ -219,7 +219,7 @@
  
         fillets.exit().remove();
 
-        var dbFillets = MyApp.dbFillet()
+        var dbFillets = myApp.dbFillet()
             .width(.25*pxPerIn)
             .height(cHeight*pxPerIn/2)
             .radius(.125*pxPerIn);
@@ -270,7 +270,7 @@
  
         fillets.exit().remove();
 
-        var dbFillets = MyApp.dbFillet()
+        var dbFillets = myApp.dbFillet()
             .width(.25*pxPerIn)
             .height(cHeight*pxPerIn/2)
             .radius(.125*pxPerIn);

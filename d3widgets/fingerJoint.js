@@ -1,12 +1,15 @@
 (function() {
 
-    MyApp.fingerJoint = function() {
+    // this is acutally just another dbFillet with W orientation 
+    // instead of (upside down) T orientation
+
+    myApp.fingerJoint = function() {
     
         var fingerHeight  = 1 * pxPerIn,
             fingerWidth   = 1  * pxPerIn, 
             radius  = .125 * pxPerIn,
             // startsMale = true; 
-            distance = 10 *pxPerIn
+            //distance = 10 *pxPerIn
             fillColor = "#fff";
             ;
         

@@ -1,5 +1,5 @@
 
-MyApp.makeBoard = function (boxWidth, boxHeight, pxPerIn, color, fjStarts) {
+myApp.makeBoard = function (boxWidth, boxHeight, pxPerIn, color, fjStarts) {
 
     var board = svg.append("g");
     
@@ -11,7 +11,7 @@ MyApp.makeBoard = function (boxWidth, boxHeight, pxPerIn, color, fjStarts) {
         .style("fill", color)
         ;
     
-    var fingerJts = MyApp.fingerJoint()
+    var fingerJts = myApp.fingerJoint()
         .fingerWidth(.5*pxPerIn)
         .fingerHeight(.25*pxPerIn) // quarter inch material
         .radius(.08*pxPerIn) // eighth inch diam bit

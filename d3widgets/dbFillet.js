@@ -4,7 +4,7 @@
 
 (function() {
 
-    MyApp.dbFillet = function() {
+    myApp.dbFillet = function() {
    
         var height  = 1   * pxPerIn,
             width   = .5  * pxPerIn, 
