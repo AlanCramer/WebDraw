@@ -1,25 +1,36 @@
 (function() {
     
-myApp.makeBoard = function (boxWidth, boxHeight, pxPerIn, color, fjStarts) {
-
-    var board = svg.append("g");
+//myApp.makeBoard = function (width, height, pxPerIn, color, fjStarts) {
+myApp.update = function(boardData) {
     
-    board.append("rect")
-        .attr("x", 0)
-        .attr("y", 0)
-        .attr("width", boxWidth*pxPerIn)
-        .attr("height", boxHeight*pxPerIn)
-        .style("fill", color)
+    var boards = svg.selectAll(".board")
+        .data(boardData)
         ;
     
+    var brect = boards
+        .enter()
+        .append("g")
+        .attr("class", "board")
+        .append("rect")
+        ;
+     
+    brect
+        .attr("x", 0)
+        .attr("y", 0)
+        .attr("width", function(d, i) { return d.width * d.pxPerIn; } )
+        .attr("height", function(d, i) { return d.height * d.pxPerIn; } )
+        .style("fill", function(d) { return d.color; } )
+        ;
+    
+    // hmm pxPerIn is global?
     var fingerJts = myApp.fingerJoint()
-        .fingerWidth(.5*pxPerIn)
-        .fingerHeight(.25*pxPerIn) // quarter inch material
-        .radius(.08*pxPerIn) // eighth inch diam bit
+        .fingerWidth(.5*pxPerIn )
+        .fingerHeight(.25*pxPerIn ) // quarter inch material
+        .radius(.08*pxPerIn ) // eighth inch diam bit
         ; // returns function 
     
-    var lfjs = board.selectAll(".leftFingerJoint")
-        .data(fjStarts);
+    var lfjs = boards.selectAll(".leftFingerJoint")
+        .data(function(d) { return d.fjStarts} );
           
     lfjs.enter()
         .append("g")
@@ -28,19 +39,26 @@ myApp.makeBoard = function (boxWidth, boxHeight, pxPerIn, color, fjStarts) {
         .call(fingerJts)
         ;
         
-    var rfjs = board.selectAll(".rightFingerJoint")
-        .data(fjStarts);
+    var rfjs = boards.selectAll(".rightFingerJoint")
+        .data(function(d) { return d.fjStarts} );
           
     rfjs.enter()
         .append("g")
         .attr("class", "rightFingerJoint")
-        .attr("transform", "translate (" + 
-            (boxWidth*pxPerIn) + ", " + 
-            (boxHeight*pxPerIn) + ") rotate(90)" )
+        .attr("transform", function(d) {
+            
+            // get the data of the parent (the board group) for this joint 
+            // hmm, this doesn't feel right ...
+            var brdData = d3.select(this.parentNode).data()[0];
+            
+            return "translate (" + 
+                (brdData.width * brdData.pxPerIn) + ", " + 
+                (brdData.height * brdData.pxPerIn) + ") rotate(90)";
+        })
         .call(fingerJts)
         ;        
 
-    return board;
+    return boards;
 }
 
 })();

@@ -26,7 +26,7 @@
 #inputArea {
 
     margin-top: 15px;
-    width: 10%;
+    width: 20%;
     display: table;
 }
 
@@ -61,6 +61,30 @@ svg {
 
 <script>
 
+myApp.onBoxDimChange = function() {
+    
+    
+}
+
+// boards is a d3 selection of the all the boards (svg groups), 
+// bound to their corresponding data
+myApp.layoutBoards = function(boards) {
+
+    var spacing = 10; // px
+    var xoffset = 20; // px
+    var yoffset = 20; // px
+    
+    var totalY = yoffset;
+    
+    boards
+        .attr("transform", function(d) { 
+        
+            var ret = "translate (" + xoffset + ", " + totalY + ")";
+            totalY += (d.height * d.pxPerIn + spacing); // setting up for next one
+            return  ret;
+        });
+}
+
     var pxPerIn = 30;
     
     var boxWidth = 8;
@@ -70,6 +94,23 @@ svg {
     var svgWidth = 600;
     var svgHeight = 400;
 
+    var boardData = [ 
+        {
+            width    : boxWidth,
+            height   : boxHeight,
+            pxPerIn  : pxPerIn,
+            color    : "#944",
+            fjStarts : [0,1,2,3] 
+        },
+        {
+            width    : boxLength,
+            height   : boxHeight,
+            pxPerIn  : pxPerIn,
+            color    : "#449",
+            fjStarts : [0.5,1.5,2.5] 
+        },
+    ];
+    
     // todo revisit this function
     buildInfoArea();
 
@@ -80,26 +121,32 @@ svg {
         .attr("height", svgHeight)
         .style("border", "1px solid black")
         ;
+        
+    var boards = myApp.update(boardData);
+    myApp.layoutBoards(boards);
     
-    var board1 = myApp.makeBoard(boxWidth, boxHeight, pxPerIn, "#944", [0,1,2,3]);
-    var board2 = myApp.makeBoard(boxLength, boxHeight, pxPerIn, "#449", [0.5,1.5,2.5]);
     
-    var xOffset = 30;
-    var yOffset = 20;  
-     
-    board1
-        .attr("transform", "scale(0)")
-        .transition()
-        .duration(1000)
-        .attr("transform", "translate(" + xOffset + ", " + yOffset + ") scale(1)")
-        ;
-    
-    board2
-        .attr("transform", "scale(0)")
-        .transition()
-        .duration(1200)
-        .attr("transform", "translate(" + xOffset + ", " + (yOffset + svgHeight/2) + ") scale(1)")
-        ;
+//    var board1 = myApp.makeBoard(boxWidth, boxHeight, pxPerIn, "#944", [0,1,2,3]);
+//    var board2 = myApp.makeBoard(boxLength, boxHeight, pxPerIn, "#449", [0.5,1.5,2.5]);
+//    
+//    var xOffset = 30;
+//    var yOffset = 20;  
+//     
+//    board1
+//        .attr("transform", "scale(0)")
+//        .transition()
+//        .duration(1000)
+//        .attr("transform", "translate(" + xOffset + ", " + yOffset + ") scale(1)")
+//        ;
+//    
+//    board2
+//        .attr("transform", "scale(0)")
+//        .transition()
+//        .duration(1200)
+//        .attr("transform", "translate(" + xOffset + ", " + (yOffset + svgHeight/2) + ") scale(1)")
+//        ;
+//
+
 
         
         

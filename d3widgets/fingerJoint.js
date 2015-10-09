@@ -19,7 +19,8 @@
                 var g = d3.select(this);
                 
                 g.append("rect")
-                    .attr("x", function(d) { return -d*pxPerIn-fingerWidth/2; })
+                    .attr("x", function(d) { 
+                        return -d*pxPerIn-fingerWidth/2; })
                     .attr("y", 0)
                     .attr("width", fingerWidth)
                     .attr("height", fingerHeight)

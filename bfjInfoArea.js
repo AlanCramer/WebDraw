@@ -1,6 +1,6 @@
 
 
-// takes pxPerIn, boxWidth,boxHeight and boxLength, and a onChangeBoxDims function
+// takes pxPerIn, boxWidth,boxHeight and boxLength, and a onBoxDimChange function
 // currently expects those to be globals!?!?
  
 var buildInfoArea = function () {
@@ -31,7 +31,7 @@ var buildInfoArea = function () {
         .attr("id", "boxWidth")
         .attr("type", "text")
         .attr("value", boxWidth)
-        //.on("change", onUpdateBoxDims)
+        //.on("change", onBoxDimChange)
         ;
         
     var row2 = inputArea.append("div")
