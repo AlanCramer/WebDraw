@@ -8,6 +8,7 @@
 
 <script src="d3widgets/fingerJoint.js"></script>
 <script src="makeBoard.js"></script>
+<script src="makeBoardData.js"></script>
 <script src="bfjInfoArea.js"></script>
 
 <head>
@@ -63,7 +64,13 @@ svg {
 
 myApp.onBoxDimChange = function() {
     
+    boxWidth = +document.getElementById("boxWidth").value;
+    boxLength = +document.getElementById("boxLength").value;
+    boxHeight = +document.getElementById("boxHeight").value;
+
+    boardData = myApp.makeBoardData(boxWidth, boxLength, boxHeight, [0,1,2,3]);
     
+    myApp.update(boardData);
 }
 
 // boards is a d3 selection of the all the boards (svg groups), 
@@ -85,6 +92,7 @@ myApp.layoutBoards = function(boards) {
         });
 }
 
+
     var pxPerIn = 30;
     
     var boxWidth = 8;
@@ -94,22 +102,7 @@ myApp.layoutBoards = function(boards) {
     var svgWidth = 600;
     var svgHeight = 400;
 
-    var boardData = [ 
-        {
-            width    : boxWidth,
-            height   : boxHeight,
-            pxPerIn  : pxPerIn,
-            color    : "#944",
-            fjStarts : [0,1,2,3] 
-        },
-        {
-            width    : boxLength,
-            height   : boxHeight,
-            pxPerIn  : pxPerIn,
-            color    : "#449",
-            fjStarts : [0.5,1.5,2.5] 
-        },
-    ];
+    var boardData = myApp.makeBoardData(boxWidth, boxLength, boxHeight, [0,1,2,3]);
     
     // todo revisit this function
     buildInfoArea();
@@ -124,31 +117,7 @@ myApp.layoutBoards = function(boards) {
         
     var boards = myApp.update(boardData);
     myApp.layoutBoards(boards);
-    
-    
-//    var board1 = myApp.makeBoard(boxWidth, boxHeight, pxPerIn, "#944", [0,1,2,3]);
-//    var board2 = myApp.makeBoard(boxLength, boxHeight, pxPerIn, "#449", [0.5,1.5,2.5]);
-//    
-//    var xOffset = 30;
-//    var yOffset = 20;  
-//     
-//    board1
-//        .attr("transform", "scale(0)")
-//        .transition()
-//        .duration(1000)
-//        .attr("transform", "translate(" + xOffset + ", " + yOffset + ") scale(1)")
-//        ;
-//    
-//    board2
-//        .attr("transform", "scale(0)")
-//        .transition()
-//        .duration(1200)
-//        .attr("transform", "translate(" + xOffset + ", " + (yOffset + svgHeight/2) + ") scale(1)")
-//        ;
-//
-
-
-        
+          
         
 </script>
 

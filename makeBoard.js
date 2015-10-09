@@ -7,14 +7,14 @@ myApp.update = function(boardData) {
         .data(boardData)
         ;
     
-    var brect = boards
+    boards
         .enter()
         .append("g")
         .attr("class", "board")
         .append("rect")
         ;
-     
-    brect
+        
+     var brect = boards.select("rect")
         .attr("x", 0)
         .attr("y", 0)
         .attr("width", function(d, i) { return d.width * d.pxPerIn; } )
@@ -36,8 +36,10 @@ myApp.update = function(boardData) {
         .append("g")
         .attr("class", "leftFingerJoint")
         .attr("transform", "translate (0,0) rotate(-90)" )
-        .call(fingerJts)
         ;
+    
+    lfjs
+        .call(fingerJts);
         
     var rfjs = boards.selectAll(".rightFingerJoint")
         .data(function(d) { return d.fjStarts} );
@@ -45,8 +47,11 @@ myApp.update = function(boardData) {
     rfjs.enter()
         .append("g")
         .attr("class", "rightFingerJoint")
+        ;
+
+    rfjs
         .attr("transform", function(d) {
-            
+        
             // get the data of the parent (the board group) for this joint 
             // hmm, this doesn't feel right ...
             var brdData = d3.select(this.parentNode).data()[0];
@@ -56,6 +61,7 @@ myApp.update = function(boardData) {
                 (brdData.height * brdData.pxPerIn) + ") rotate(90)";
         })
         .call(fingerJts)
+        
         ;        
 
     return boards;

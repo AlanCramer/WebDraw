@@ -31,7 +31,7 @@ var buildInfoArea = function () {
         .attr("id", "boxWidth")
         .attr("type", "text")
         .attr("value", boxWidth)
-        //.on("change", onBoxDimChange)
+        .on("change", myApp.onBoxDimChange)
         ;
         
     var row2 = inputArea.append("div")
@@ -48,7 +48,7 @@ var buildInfoArea = function () {
         .attr("id", "boxLength")
         .attr("type", "text")
         .attr("value", boxLength)
-        //.on("change", handleDataUpdate)
+        .on("change", myApp.onBoxDimChange)
         ;    
         
     var row3 = inputArea.append("div")
@@ -65,7 +65,7 @@ var buildInfoArea = function () {
         .attr("id", "boxHeight")
         .attr("type", "text")
         .attr("value", boxHeight)
-        //.on("change", handleDataUpdate)
+        .on("change", myApp.onBoxDimChange)
         ;
         
 }
