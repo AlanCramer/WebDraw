@@ -28,7 +28,29 @@
                 fLength  : fingerLength,
                 fjStarts : lengthStarts 
             }   
-        );            
+        );  
+
+        bd.push(
+            {
+                width    : boxWidth,
+                height   : boxHeight,
+                pxPerIn  : pxPerIn,
+                color    : "#944",
+                fLength  : fingerLength,
+                fjStarts : widthStarts 
+            }
+        );
+    
+        bd.push(        
+            {
+                width    : boxLength,
+                height   : boxHeight,
+                pxPerIn  : pxPerIn,
+                color    : "#449",
+                fLength  : fingerLength,
+                fjStarts : lengthStarts 
+            }   
+        );        
     
         return bd;
     };

@@ -10,6 +10,7 @@
 <script src="makeBoard.js"></script>
 <script src="makeBoardData.js"></script>
 <script src="bfjInfoArea.js"></script>
+<script src="exportSvg.js"></script>
 
 <head>
 </head>
@@ -60,9 +61,18 @@ svg {
 </style>
 
 
+
+<a id="link" href="#">Right Click and "Save Link as" to save SVG</a><br>
+
+
+
+
 <script>
 
 myApp.onBoxDimChange = function() {
+
+
+    pxPerIn = +document.getElementById("pxPerIn").value;
     
     boxWidth = +document.getElementById("boxWidth").value;
     boxLength = +document.getElementById("boxLength").value;
@@ -112,17 +122,25 @@ myApp.layoutBoards = function(boards) {
     // todo revisit this function
     buildInfoArea();
 
+    var svgContainer = d3.select("body")
+        .append("div")
+        .style("border", "1px solid black");
+        
     // build svg and boards    
-    var svg = d3.select("body")
+    var svg = svgContainer
         .append("svg")
+        .attr("id", "svg")
         .attr("width", svgWidth)
         .attr("height", svgHeight)
-        .style("border", "1px solid black")
+        //.style("border", "1px solid black")
         ;
         
     var boards = myApp.update(boardData);
     myApp.layoutBoards(boards);
           
+    d3.select("#link")
+        .on("click", myApp.prepareSvgExport)
+        .on("contextmenu", myApp.prepareSvgExport);
         
 </script>
 

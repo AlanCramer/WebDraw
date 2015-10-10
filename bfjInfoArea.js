@@ -10,12 +10,25 @@ var buildInfoArea = function () {
         .attr("id", "infoArea")
         ;
     
-    infoArea
-        .append("label")
-        .text("Pixels Per Inch: " + pxPerIn);
-    
     var inputArea = infoArea.append("div")
         .attr("id", "inputArea");
+    
+    var row0 = inputArea.append("div")
+        .attr("class", "inputRow");
+        
+    row0    
+        .append("label")
+        .attr("class", "inputLabel")
+        .text("Pixels Per Inch: ");
+    
+    row0
+        .append("input")
+        .attr("id", "pxPerIn")
+        .attr("type", "text")
+        .attr("value", pxPerIn)
+        .on("change", myApp.onBoxDimChange)
+        ;    
+
     
     var row1 = inputArea.append("div")
         .attr("class", "inputRow");
