@@ -68,4 +68,21 @@ var buildInfoArea = function () {
         .on("change", myApp.onBoxDimChange)
         ;
         
+    var row4 = inputArea.append("div")
+        .attr("class", "inputRow");        
+        
+    row4
+        .append ("label")
+        .attr("class", "inputLabel")
+        .text("Finger Length")
+        ;
+        
+    row4
+        .append("input")
+        .attr("id", "fingerLength")
+        .attr("type", "text")
+        .attr("value", fingerLength)
+        .on("change", myApp.onBoxDimChange)
+        ;    
+        
 }

@@ -27,9 +27,10 @@ myApp.update = function(boardData) {
     // this should never happen
     boards.exit().remove();
     
-    // hmm pxPerIn is global?
+    // hmm pxPerIn is global? fingerLength?
+    // make separate function for each board side?
     var fingerJts = myApp.fingerJoint()
-        .fingerWidth(.5*pxPerIn )
+        .fingerWidth(.5*pxPerIn*fingerLength )
         .fingerHeight(.25*pxPerIn ) // quarter inch material
         .radius(.08*pxPerIn ) // eighth inch diam bit
         ; // returns function 

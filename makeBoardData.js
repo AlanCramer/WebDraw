@@ -14,6 +14,7 @@
                 height   : boxHeight,
                 pxPerIn  : pxPerIn,
                 color    : "#944",
+                fLength  : fingerLength,
                 fjStarts : widthStarts 
             }
         );
@@ -24,6 +25,7 @@
                 height   : boxHeight,
                 pxPerIn  : pxPerIn,
                 color    : "#449",
+                fLength  : fingerLength,
                 fjStarts : lengthStarts 
             }   
         );            
