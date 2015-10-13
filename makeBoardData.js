@@ -13,7 +13,7 @@
                 width    : boxWidth,
                 height   : boxHeight,
                 pxPerIn  : pxPerIn,
-                color    : "#944",
+                color    : "#000",    // "#944",
                 fLength  : fingerLength,
                 fjStarts : widthStarts 
             }
@@ -24,7 +24,7 @@
                 width    : boxLength,
                 height   : boxHeight,
                 pxPerIn  : pxPerIn,
-                color    : "#449",
+                color    : "#000",    // "#449",
                 fLength  : fingerLength,
                 fjStarts : lengthStarts 
             }   
@@ -35,7 +35,7 @@
                 width    : boxWidth,
                 height   : boxHeight,
                 pxPerIn  : pxPerIn,
-                color    : "#944",
+                color    : "#000",    // "#944",
                 fLength  : fingerLength,
                 fjStarts : widthStarts 
             }
@@ -46,7 +46,7 @@
                 width    : boxLength,
                 height   : boxHeight,
                 pxPerIn  : pxPerIn,
-                color    : "#449",
+                color    : "#000",    //  "#449",
                 fLength  : fingerLength,
                 fjStarts : lengthStarts 
             }   
