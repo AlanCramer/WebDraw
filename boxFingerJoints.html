@@ -93,16 +93,30 @@ myApp.layoutBoards = function(boards) {
     var xoffset = 20; // px
     var yoffset = 20; // px
     
-    var totalY = yoffset;
+    var totalX = xoffset; // for setting svg
+    var totalY = yoffset; // for svg and board position
     
     boards
         .transition()
         .duration(3000)
         .attr("transform", function(d) { 
+            
             var ret = "translate (" + xoffset + ", " + totalY + ")";
+            
+            totalX = d3.max([totalX, d.width * d.pxPerIn + xoffset]); // setting up for next one
             totalY += (d.height * d.pxPerIn + spacing); // setting up for next one
             return  ret;
         });
+   
+    var newSvgWidth = totalX + xoffset;
+    var newSvgHeight = totalY + yoffset;
+    
+    svg.transition()
+        .duration(5000)
+        .attr("width", newSvgWidth)
+        .attr("height", newSvgHeight)
+        ;
+    
 }
 
 
@@ -124,7 +138,9 @@ myApp.layoutBoards = function(boards) {
 
     var svgContainer = d3.select("body")
         .append("div")
-        .style("border", "1px solid black");
+        .style("border", "1px solid black")
+        .style("float", "left") // to make the div hug the svg
+        ;
         
     // build svg and boards    
     var svg = svgContainer
