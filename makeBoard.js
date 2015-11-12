@@ -32,7 +32,7 @@ myApp.update = function(boardData) {
     var fingerJts = myApp.fingerJoint()
         .fingerWidth(.5*pxPerIn*fingerLength )
         .fingerHeight(.25*pxPerIn ) // quarter inch material
-        .radius(.08*pxPerIn ) // eighth inch diam bit
+        .radius(.125*pxPerIn ) // eighth inch diam bit
         ; // returns function 
     
     var lfjs = boards.selectAll(".leftFingerJoint")

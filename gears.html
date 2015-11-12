@@ -5,11 +5,7 @@
 <script>
     var myApp = {};
 </script>
-
-<script src="d3widgets/fingerJoint.js"></script>
-<script src="makeBoard.js"></script>
-<script src="makeBoardData.js"></script>
-<script src="bfjInfoArea.js"></script>
+<script src="makeGear.js"></script>
 <script src="exportSvg.js"></script>
 
 <head>
@@ -69,25 +65,18 @@ svg {
 
 <script>
 
-myApp.onBoxDimChange = function() {
+myApp.onDimChange = function() {
 
 
-    pxPerIn = +document.getElementById("pxPerIn").value;
-    
-    boxWidth = +document.getElementById("boxWidth").value;
-    boxLength = +document.getElementById("boxLength").value;
-    boxHeight = +document.getElementById("boxHeight").value;
-    fingerLength = +document.getElementById("fingerLength").value;
-
-    boardData = myApp.makeBoardData(boxWidth, boxLength, boxHeight, fingerLength);
+    boardData = myApp.makeGearData();
     
     var boards = myApp.update(boardData);
-    myApp.layoutBoards(boards);
+
 }
 
 // boards is a d3 selection of the all the boards (svg groups), 
 // bound to their corresponding data
-myApp.layoutBoards = function(boards) {
+myApp.layoutGears = function(gears) {
 
     var spacing = 25; // px
     var xoffset = 10; // px
@@ -96,7 +85,7 @@ myApp.layoutBoards = function(boards) {
     var totalX = xoffset; // for setting svg
     var totalY = yoffset; // for svg and board position
     
-    boards
+    gears
         .transition()
         .duration(3000)
         .attr("transform", function(d) { 
@@ -120,21 +109,17 @@ myApp.layoutBoards = function(boards) {
 }
 
 
-    var pxPerIn = 30;
-    
-    var boxWidth = 8;
-    var boxLength = 4;
-    var boxHeight = 3;
-    
-    var fingerLength = 1;
+    var pxPerIn = 10;
     
     var svgWidth = 600;
     var svgHeight = 400;
 
-    var boardData = myApp.makeBoardData(boxWidth, boxLength, boxHeight, fingerLength);
+    var gearData = [
+        { x:15, y:15, outR: 7, inR:2, toothCt: 20, toothL: 1, toothW: 1, color:"#000"},
+    //    { x:25, y:15, outR: 5, inR:3, toothCt: 10, toothL: 1, toothW: 1, color:"#090"},
+    //    { x:20, y:30, outR: 8, inR:5, toothCt: 30, toothL: 1, toothW: 1, color:"#009"},
+    ];
     
-    // todo revisit this function
-    buildInfoArea();
 
     var svgContainer = d3.select("body")
         .append("div")
@@ -150,8 +135,8 @@ myApp.layoutBoards = function(boards) {
         .attr("height", svgHeight)
         ;
         
-    var boards = myApp.update(boardData);
-    myApp.layoutBoards(boards);
+    var gears = myApp.update(gearData, pxPerIn);
+    //myApp.layoutGears(gears);
           
     d3.select("#link")
         .on("click", myApp.prepareSvgExport)

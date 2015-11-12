@@ -7,14 +7,19 @@
 </script>
 
 <script src="d3widgets/dbFillet.js"></script>
-
+<script src="exportSvg.js"></script>
 <head>
 </head>
 
 <body>
+
+<a id="link" href="#">Right Click and "Save Link as" to save SVG</a><br>
+
 <script>
 
-
+    d3.select("#link")
+        .on("click", myApp.prepareSvgExport)
+        .on("contextmenu", myApp.prepareSvgExport);
 
     var InfoBoxSvgWidth = 300;
     var InfoBoxSvgHeight = 200;
@@ -81,12 +86,14 @@
         .attr("height", cWidth*pxPerIn)
         .style("fill", "#bbb");
     
-    var partsSvgWidth = 2*InfoBoxSvgWidth;
-    var partsSvgHeight = 2*InfoBoxSvgHeight;
+    var maxBrds = d3.max([xSpacings.length, ySpacings.length]);
+    var partsSvgWidth = (cLength+cWidth)*pxPerIn + 100;
+    var partsSvgHeight = cHeight*pxPerIn*maxBrds + 30*maxBrds;
     
     var partsSvg = d3.select("body")
         .append("div")
         .append("svg")
+        .attr("id", "svg")
         .attr("width", partsSvgWidth)
         .attr("height", partsSvgHeight)
         .style("border", "1px solid black");
@@ -199,7 +206,7 @@
             .enter()
             .append("g")   
             .attr("transform", function(d, i) { 
-                return  "translate(" + (partsSvgWidth/2 + 10) + "," + i*(cHeight*pxPerIn +10) + ")" ;
+                return  "translate(" + (partsSvgWidth/2 + 10) + "," + (i*(cHeight*pxPerIn +10)+10) + ")" ;
             })
             .append("g")
             .append("rect")
@@ -210,7 +217,7 @@
             .attr("y", 0)
             .attr("width", cWidth*pxPerIn)
             .attr("height", cHeight*pxPerIn)
-            .style("fill", "#944"); 
+            .style("fill", "black"); 
             
 
          var fillets = vertSpcParts.selectAll(".dbFillet")
@@ -251,7 +258,7 @@
             .enter()
             .append("g")
             .attr("class", "horzSpacerPart")
-            .attr("transform", function(d,i) {return "translate (0, " + i*(cHeight*pxPerIn+10 ) + ")"; })
+            .attr("transform", function(d,i) {return "translate (10, " + (i*(cHeight*pxPerIn+10)+10) + ")"; })
             .append("g")
             .attr("class", "geom")
             .append("rect");
@@ -261,7 +268,7 @@
             .attr("y", 0)
             .attr("width", cLength*pxPerIn)
             .attr("height", cHeight*pxPerIn)
-            .style("fill", "#449")
+            .style("fill", "black")
             ;
  
         var fillets = horzSpcPartsG.selectAll(".dbFillet")

@@ -20,21 +20,21 @@
                     .attr("y", 0)
                     .attr("width", width)
                     .attr("height", height)
-                    .style("fill", "#888")
+                    .style("fill", "#fff")
                     ;
             
                 g.append("circle")
                     .attr("cx", -width/2)
                     .attr("cy", height-radius)
                     .attr("r", radius)
-                    .style("fill", "#888")
+                    .style("fill", "#fff")
                     ;
                     
                 g.append("circle")
                     .attr("cx", width/2)
                     .attr("cy", height-radius)
                     .attr("r", radius)
-                    .style("fill", "#888")
+                    .style("fill", "#fff")
                     ;
                            
             }); // g.each
